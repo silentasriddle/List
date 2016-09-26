@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="LXTaskCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <frame key="frameInset" minX="0.0%" minY="0.0%" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h0x-lR-xbL">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="JrT-FQ-sc3"/>
+                            <constraint firstAttribute="width" constant="30" id="Maf-Dw-EIk"/>
+                        </constraints>
+                        <state key="normal" image="未完成"/>
+                        <state key="selected" image="已完成"/>
+                        <connections>
+                            <action selector="finishBtnClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="CLT-fa-pqt"/>
+                        </connections>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yJs-m5-rgL">
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="grb-JL-FcU"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="yJs-m5-rgL" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="C5u-GC-7Sw"/>
+                    <constraint firstItem="yJs-m5-rgL" firstAttribute="leading" secondItem="h0x-lR-xbL" secondAttribute="trailing" constant="8" id="PWf-Xd-aWs"/>
+                    <constraint firstItem="h0x-lR-xbL" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="g3k-Bj-8lf"/>
+                    <constraint firstItem="h0x-lR-xbL" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="kDP-cK-AD4"/>
+                    <constraint firstItem="yJs-m5-rgL" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="wqG-q0-2LQ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="markBtn" destination="h0x-lR-xbL" id="MTh-cn-fQJ"/>
+                <outlet property="titleLabel" destination="yJs-m5-rgL" id="s5F-3x-xk7"/>
+            </connections>
+            <point key="canvasLocation" x="95" y="51"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="已完成" width="36" height="36"/>
+        <image name="未完成" width="36" height="36"/>
+    </resources>
+</document>

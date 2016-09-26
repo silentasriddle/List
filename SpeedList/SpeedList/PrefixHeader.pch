@@ -1,0 +1,31 @@
+//
+//  PrefixHeader.pch
+//  SpeedList
+//
+//  Created by 李想 on 16/9/16.
+//  Copyright © 2016年 BAT. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#define Application [UIApplication sharedApplication]
+/************导航相关************/
+#import "MainNavigationViewController.h"
+#define MainNavi(vc) [[MainNavigationViewController alloc]initWithRootViewController:vc]
+/************颜色相关************/
+#define LXCyan [UIColor colorWithRed:100/255.0 green:200/255.0 blue:200/255.0 alpha:1]
+#define LXBeige [UIColor colorWithRed:244/255.0 green:229/255.0 blue:172/255.0 alpha:1]
+/************Bmob相关************/
+#import <BmobSDK/Bmob.h>
+#define CurrentUser [BmobUser currentUser]
+/************图片相关************/
+#define LoadingImage [UIImage imageNamed:@"loadingImage"]
+/************EaseMob相关************/
+#import "EManager.h"
+#define Emanager [EManager sharedEmanager]
+/************尺寸相关************/
+#define MainFrame [UIScreen mainScreen].bounds
+#define LXSW [UIScreen mainScreen].bounds.size.width
+#define LXSH [UIScreen mainScreen].bounds.size.height
+#endif /* PrefixHeader_pch */

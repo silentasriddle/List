@@ -1,0 +1,9 @@
+platform:ios,'10.0'
+target 'SpeedList' do
+pod 'BmobSDK'
+pod 'YYKit'
+pod 'SDWebImage','~>3.8'
+pod 'MBProgressHUD', '~> 1.0.0'
+pod 'SVPullToRefresh'
+pod 'EaseMobSDK', :git => 'https://github.com/easemob/sdk-ios-cocoapods.git'
+end

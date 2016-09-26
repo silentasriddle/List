@@ -1,0 +1,40 @@
+PODS:
+  - BmobSDK (1.7.2)
+  - EaseMobSDK (2.2.7)
+  - MBProgressHUD (1.0.0)
+  - SDWebImage (3.8.2):
+    - SDWebImage/Core (= 3.8.2)
+  - SDWebImage/Core (3.8.2)
+  - SVPullToRefresh (0.4.1)
+  - YYKit (1.0.9):
+    - YYKit/no-arc (= 1.0.9)
+  - YYKit/no-arc (1.0.9)
+
+DEPENDENCIES:
+  - BmobSDK
+  - EaseMobSDK (from `https://github.com/easemob/sdk-ios-cocoapods.git`)
+  - MBProgressHUD (~> 1.0.0)
+  - SDWebImage (~> 3.8)
+  - SVPullToRefresh
+  - YYKit
+
+EXTERNAL SOURCES:
+  EaseMobSDK:
+    :git: https://github.com/easemob/sdk-ios-cocoapods.git
+
+CHECKOUT OPTIONS:
+  EaseMobSDK:
+    :commit: 78b535c1d3711a871acc9f54b0c9bb8be4a018e8
+    :git: https://github.com/easemob/sdk-ios-cocoapods.git
+
+SPEC CHECKSUMS:
+  BmobSDK: e188cb31d6a8417ab668aee821da227d7512b865
+  EaseMobSDK: 418ecf1c2bf02b551b7700efc2fc176567f8600a
+  MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
+  SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
+  SVPullToRefresh: ba2e718695a43253d8bea6852d2960097dc15d8c
+  YYKit: 7cda43304a8dc3696c449041e2cb3107b4e236e7
+
+PODFILE CHECKSUM: e8412bc7b1e6e586c757a6cb77e59d109b0273cf
+
+COCOAPODS: 1.1.0.beta.2
