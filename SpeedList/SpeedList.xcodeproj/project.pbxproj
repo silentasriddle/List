@@ -27,6 +27,8 @@
 		C97B88971D97F68500832E3B /* LXListSectionFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = C97B88961D97F68500832E3B /* LXListSectionFooterView.m */; };
 		C97B889B1D97F6B200832E3B /* LXListSectionFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = C97B889A1D97F6B200832E3B /* LXListSectionFooterView.xib */; };
 		C97B88A11D98A05800832E3B /* NSDate+LXCompareDate.m in Sources */ = {isa = PBXBuildFile; fileRef = C97B88A01D98A05800832E3B /* NSDate+LXCompareDate.m */; };
+		C97B88A91D994FAF00832E3B /* LXFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C97B88A71D994FAF00832E3B /* LXFriendsViewController.m */; };
+		C97B88AA1D994FAF00832E3B /* LXFriendsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C97B88A81D994FAF00832E3B /* LXFriendsViewController.xib */; };
 		C99F54701D9231D8001D50DB /* LXTaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C99F546E1D9231D8001D50DB /* LXTaskListViewController.m */; };
 		C99F54711D9231D8001D50DB /* LXTaskListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C99F546F1D9231D8001D50DB /* LXTaskListViewController.xib */; };
 		C99F54791D926A37001D50DB /* AddTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C99F54771D926A37001D50DB /* AddTaskViewController.m */; };
@@ -121,6 +123,9 @@
 		C97B889A1D97F6B200832E3B /* LXListSectionFooterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LXListSectionFooterView.xib; sourceTree = "<group>"; };
 		C97B889F1D98A05800832E3B /* NSDate+LXCompareDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+LXCompareDate.h"; sourceTree = "<group>"; };
 		C97B88A01D98A05800832E3B /* NSDate+LXCompareDate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+LXCompareDate.m"; sourceTree = "<group>"; };
+		C97B88A61D994FAF00832E3B /* LXFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LXFriendsViewController.h; path = SpeedList/ThirdParty/LXFriendsViewController.h; sourceTree = SOURCE_ROOT; };
+		C97B88A71D994FAF00832E3B /* LXFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LXFriendsViewController.m; path = SpeedList/ThirdParty/LXFriendsViewController.m; sourceTree = SOURCE_ROOT; };
+		C97B88A81D994FAF00832E3B /* LXFriendsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LXFriendsViewController.xib; path = SpeedList/ThirdParty/LXFriendsViewController.xib; sourceTree = SOURCE_ROOT; };
 		C99F546D1D9231D8001D50DB /* LXTaskListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LXTaskListViewController.h; sourceTree = "<group>"; };
 		C99F546E1D9231D8001D50DB /* LXTaskListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LXTaskListViewController.m; sourceTree = "<group>"; };
 		C99F546F1D9231D8001D50DB /* LXTaskListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LXTaskListViewController.xib; sourceTree = "<group>"; };
@@ -291,6 +296,41 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		C97B88A21D994F9A00832E3B /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				C97B88A31D994F9A00832E3B /* Controller */,
+				C97B88A41D994F9A00832E3B /* Model */,
+				C97B88A51D994F9A00832E3B /* View */,
+			);
+			name = Friends;
+			path = Classes/Friends;
+			sourceTree = "<group>";
+		};
+		C97B88A31D994F9A00832E3B /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				C97B88A61D994FAF00832E3B /* LXFriendsViewController.h */,
+				C97B88A71D994FAF00832E3B /* LXFriendsViewController.m */,
+				C97B88A81D994FAF00832E3B /* LXFriendsViewController.xib */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		C97B88A41D994F9A00832E3B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C97B88A51D994F9A00832E3B /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		C99F54691D9231C4001D50DB /* TaskList */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,6 +405,7 @@
 		C9AC0A911D8B9F2B00589F0D /* SpeedList */ = {
 			isa = PBXGroup;
 			children = (
+				C97B88A21D994F9A00832E3B /* Friends */,
 				C9AC0AC51D8B9FE300589F0D /* Main */,
 				C93B90F01D8BEB9E0086803E /* Home */,
 				C93B90FC1D8BEFF00086803E /* User */,
@@ -679,6 +720,7 @@
 			files = (
 				C9AC0AA21D8B9F2B00589F0D /* LaunchScreen.storyboard in Resources */,
 				C93B91091D8C1C580086803E /* UserViewController.xib in Resources */,
+				C97B88AA1D994FAF00832E3B /* LXFriendsViewController.xib in Resources */,
 				C9AC0AF81D8BDAAF00589F0D /* wave70x117@2x.png in Resources */,
 				C9AC0AF61D8BDAAF00589F0D /* mic_talk_358x358@2x.png in Resources */,
 				C9AC0A9F1D8B9F2B00589F0D /* Assets.xcassets in Resources */,
@@ -779,6 +821,7 @@
 				C99F54701D9231D8001D50DB /* LXTaskListViewController.m in Sources */,
 				C9AC0AD31D8BA01E00589F0D /* LoginViewController.m in Sources */,
 				C97B88A11D98A05800832E3B /* NSDate+LXCompareDate.m in Sources */,
+				C97B88A91D994FAF00832E3B /* LXFriendsViewController.m in Sources */,
 				C99F547D1D936179001D50DB /* RemarkViewController.m in Sources */,
 				C93B90EE1D8BE1720086803E /* RegisterViewController.m in Sources */,
 				C9AC0AF41D8BDAAF00589F0D /* LCVoiceHud.m in Sources */,

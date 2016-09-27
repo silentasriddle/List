@@ -18,7 +18,7 @@
 @property (nonatomic,strong)NSArray *photoDatas;
 @property (nonatomic)BOOL isCompleted;
 @property (nonatomic,strong)BmobUser *user;
-@property(nonatomic,strong)BmobObject *bmobTask;
+@property(nonatomic,strong)NSString *bmobTaskID;
 -(instancetype)initWithBmobObject:(BmobObject *)bObj;
 +(TaskModel*)unarchivedWithPath:(NSString*)path;
 @end

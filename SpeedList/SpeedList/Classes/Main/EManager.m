@@ -9,6 +9,11 @@
 #import "EManager.h"
 EManager *_emanager = nil;
 @implementation EManager
+-(NSMutableArray *)requests{
+    if (!_requests) {
+        _requests = [NSMutableArray array];
+    }return  _requests;
+}
 +(instancetype)sharedEmanager{
     @synchronized (self) {
         if (_emanager == nil) {
@@ -51,4 +56,15 @@ EManager *_emanager = nil;
     }
 }
 
+
+#pragma mark <EaseMobDelegate>
+- (void)didReceiveBuddyRequest:(NSString *)username
+                       message:(NSString *)message{
+    if (!message) {
+        message = [username stringByAppendingFormat:@"请求加你为好友:%@",message];
+    }
+    NSDictionary *request = @{@"username":username,@"message":message};
+    [self.requests addObject:request];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshFriendList" object:nil];
+}
 @end

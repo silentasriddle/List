@@ -12,6 +12,8 @@
 #import "TaskListCell.h"
 #import "NSDate+LXCompareDate.h"
 #import "LXTaskListViewController.h"
+#define FManager [NSFileManager defaultManager]
+#define DocuPath [NSHomeDirectory() stringByAppendingFormat:@"/Documents/User/%@/Tasks",CurrentUser.username]
 @interface HomeViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableViewCell *mailCell;
 @property (weak, nonatomic) IBOutlet UILabel *mailLabel;
@@ -35,16 +37,24 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"添加清单" style:UIBarButtonItemStyleDone target:self action:@selector(addTaskCellAction)];
     [self.tableView registerNib:[UINib nibWithNibName:@"TaskListCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"cell"];
     [self.tableView addPullToRefreshWithActionHandler:^{
-        [self loadTaskCells];
+//        [self loadTaskCells];
+        
         [self checkUnFinishedTasks];
     }];
-    
+    [self readDirectories];
     NSLog(@"%@",NSHomeDirectory());
 }
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    [self.tableView triggerPullToRefresh];
+-(void)readDirectories{
+    self.taskCells = [NSMutableArray array];
+    NSArray *names = [FManager contentsOfDirectoryAtPath:DocuPath error:nil];
+    for (NSString *name in names) {
+        if (![name containsString:@"."]) {
+            [self.taskCells addObject:name];
+        }
+    }
+    [self.tableView reloadData];
 }
+
 -(void)viewDidAppear:(BOOL)animated{
     NSString *headPath = [CurrentUser objectForKey:@"headPath"];
     NSString *nick = [CurrentUser objectForKey:@"nick"];
@@ -70,12 +80,7 @@
     }
 }
 //检查未完成任务
--(NSDate *)localDateWithDate:(NSDate*)date{
-    NSTimeZone *zone = [NSTimeZone systemTimeZone];
-    NSInteger seconds = [zone secondsFromGMTForDate:date];
-    NSDate *localDate = [date dateByAddingTimeInterval:seconds];
-    return localDate;
-}
+
 -(void)checkUnFinishedTasks{
     BmobQuery *query = [BmobQuery queryWithClassName:@"MyTask"];
     [query whereKey:@"isCompleted" notEqualTo:@(YES)];
@@ -89,8 +94,6 @@
     NSMutableArray *weekTasks = [NSMutableArray array];
     for (BmobObject *task in tasks) {
         NSDate *date = [task objectForKey:@"taskDate"];
-//        NSDate *current = [self localDateWithDate:[NSDate date]];
-//        NSTimeInterval interval = [current timeIntervalSinceDate:date];
         if ([date isThisWeek]) {
             [weekTasks addObject:task];
         }
@@ -107,8 +110,6 @@
     NSMutableArray *todayTasks = [NSMutableArray array];
     for (BmobObject *task in tasks) {
         NSDate *date = [task objectForKey:@"taskDate"];
-//        NSDate *current = [self localDateWithDate:[NSDate date]];
-//        NSTimeInterval interval = [current timeIntervalSinceDate:date];
         if ([date isToday]) {
             [todayTasks addObject:task];
         }
@@ -133,7 +134,6 @@
             [self.tableView.pullToRefreshView stopAnimating];
         }
     }];
-    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -145,15 +145,19 @@
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"添加任务清单" message:@"" preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         UITextField *tf = alert.textFields.lastObject;
-        BmobObject *taskObj = [BmobObject objectWithClassName:@"TaskList"];
-        [taskObj setObject:tf.text forKey:@"listName"];
-        [taskObj setObject:[BmobUser currentUser] forKey:@"user"];
-        [taskObj saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-            if (isSuccessful) {
-                [self.taskCells addObject:taskObj];
-                [self loadTaskCells];
-            }
-        }];
+        
+        NSString *typePath = [DocuPath stringByAppendingFormat:@"/%@",tf.text];
+        [FManager createDirectoryAtPath:typePath withIntermediateDirectories:YES attributes:nil error:nil];
+        [self readDirectories];
+//        BmobObject *taskObj = [BmobObject objectWithClassName:@"TaskList"];
+//        [taskObj setObject:tf.text forKey:@"listName"];
+//        [taskObj setObject:[BmobUser currentUser] forKey:@"user"];
+//        [taskObj saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+//            if (isSuccessful) {
+////                [self.taskCells addObject:taskObj];
+////                [self loadTaskCells];
+//            }
+//        }];
         
     }];
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
@@ -184,36 +188,20 @@
                 return self.weekCell;
         }
     }
-    BmobObject *list = self.taskCells[indexPath.row];
+//    BmobObject *list = self.taskCells[indexPath.row];
     TaskListCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
-    cell.title = [list objectForKey:@"listName"];
+    cell.title = self.taskCells[indexPath.row];
     return cell;
 }
 #pragma mark <UITableViewDelegate>
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        BmobObject *list = self.taskCells[indexPath.row];
-        [self.taskCells removeObject:list];
-        NSString *type = [list objectForKey:@"listName"];
-        BmobQuery *query = [BmobQuery queryWithClassName:@"MyTask"];
-        [query whereKey:@"type" equalTo:type];
-        [query findObjectsInBackgroundWithBlock:^(NSArray *array, NSError *error) {
-            for (BmobObject *task in array) {
-                [task deleteInBackgroundWithBlock:^(BOOL isSuccessful, NSError *error) {
-                    if (isSuccessful) {
-                        NSLog(@"任务删除成功");
-                    }
-                    [list deleteInBackgroundWithBlock:^(BOOL isSuccessful, NSError *error) {
-                        if (isSuccessful) {
-                            NSLog(@"删除成功");
-                            [self loadTaskCells];
-                        }
-                    }];
-                }];
-            }
-        }];
-        
+        NSString *typeName = self.taskCells[indexPath.row];
+        NSString *typePath = [DocuPath stringByAppendingPathComponent:typeName];
+        [FManager removeItemAtPath:typePath error:nil];
+        [self.taskCells removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+
     }else{
         
     }
@@ -225,7 +213,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     LXTaskListViewController *list = [[LXTaskListViewController alloc]init];
     list.isAllowToAdd = !(indexPath.section == 0);
-    list.listTitle = indexPath.section > 0 ? [self.taskCells[indexPath.row] objectForKey:@"listName"] : self.constTitles[indexPath.row];
+    list.listTitle = indexPath.section > 0 ? self.taskCells[indexPath.row] : self.constTitles[indexPath.row];
     if (indexPath.section == 0) {
         NSArray *tasks;
         switch(indexPath.row){

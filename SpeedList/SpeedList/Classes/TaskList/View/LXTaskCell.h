@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-typedef void (^FinishBlock)(BmobObject *task);
+#import "TaskModel.h"
+typedef void (^FinishBlock)(TaskModel *task);
 @interface LXTaskCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *markBtn;
 @property (nonatomic,copy)FinishBlock finishBlock;
-@property (nonatomic,strong)BmobObject *task;
 @property (nonatomic)BOOL isCompleted;
+@property (nonatomic,strong)TaskModel *taskModel;
 @end

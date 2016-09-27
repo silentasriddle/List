@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <EaseMob.h>
 @interface EManager : NSObject<EMChatManagerDelegate>
+@property (nonatomic,strong)NSMutableArray *requests;
 +(instancetype)sharedEmanager;
 -(void)registerWithUsername:(NSString *)username andPassword:(NSString *)password;
 -(void)loginWithUsername:(NSString *)username andPassword:(NSString*)password;

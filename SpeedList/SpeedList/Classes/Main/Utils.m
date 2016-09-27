@@ -57,4 +57,23 @@
     NSData *modelData = [NSKeyedArchiver archivedDataWithRootObject:model];
     [modelData writeToFile:path atomically:YES];
 }
++(void)saveTaskStatusWithTask:(TaskModel*)taskModel{
+    NSString *docu = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    NSString *dir = [@"User" stringByAppendingFormat:@"/%@/Tasks/%@/%@",CurrentUser.username,taskModel.type,taskModel.title];
+    NSString *path = [docu stringByAppendingPathComponent:dir];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:taskModel];
+    BmobQuery *query = [BmobQuery queryWithClassName:@"MyTask"];
+    [query getObjectInBackgroundWithId:taskModel.bmobTaskID block:^(BmobObject *object, NSError *error) {
+        if (object) {
+            [object setObject:@(taskModel.isCompleted) forKey:@"isCompleted"];
+            [object setObject:CurrentUser forKey:@"user"];
+            [object updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+                if (isSuccessful) {
+                    NSLog(@"修改完成状态成功");
+                }
+            }];
+        }
+    }];
+    [data writeToFile:path atomically:YES];
+}
 @end

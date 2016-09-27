@@ -7,8 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TaskModel.h"
 typedef void (^MyCallback)(id obj);
 @interface Utils : NSObject
 +(void)archiveTaskWithPath:(NSString *)path andPhotos:(NSArray *)photos andTask:(BmobObject*)task;
 +(void)cacheTaskWithTask:(BmobObject*)task andPhotos:(NSArray *)photos;
++(void)saveTaskStatusWithTask:(TaskModel*)taskModel;
 @end

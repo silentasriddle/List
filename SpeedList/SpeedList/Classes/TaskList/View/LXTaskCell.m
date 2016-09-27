@@ -9,14 +9,7 @@
 #import "LXTaskCell.h"
 
 @implementation LXTaskCell
--(void)setTask:(BmobObject *)task{
-    _task = task;
-    self.titleLabel.text = [task objectForKey:@"title"];
-    if ([[task objectForKey:@"isCompleted"]boolValue]) {
-        self.markBtn.selected = YES;
-        self.isCompleted = YES;
-    }
-}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     self.backgroundColor = [UIColor clearColor];
@@ -25,6 +18,11 @@
     self.contentView.layer.masksToBounds = YES;
     
     // Initialization code
+}
+-(void)setTaskModel:(TaskModel *)taskModel{
+    _taskModel = taskModel;
+    self.titleLabel.text = taskModel.title;
+    self.markBtn.selected = taskModel.isCompleted;
 }
 -(void)layoutSubviews{
     CGRect frame = self.contentView.frame;
@@ -36,7 +34,7 @@
 - (IBAction)finishBtnClick:(UIButton*)sender {
     sender.selected = !sender.isSelected;
     if (!self.isCompleted) {
-        self.finishBlock(self.task);
+        self.finishBlock(self.taskModel);
     }
     
 }

@@ -9,6 +9,7 @@
 #import "MainTabbarController.h"
 #import "HomeViewController.h"
 #import "UserViewController.h"
+#import "LXFriendsViewController.h"
 @interface MainTabbarController ()
 
 @end
@@ -25,8 +26,10 @@
     UserViewController *user = [[UserViewController alloc]init];
     user.title = @"用户";
     user.tabBarItem.image = [UIImage imageNamed:@"我的_默认"];
-    
-    self.viewControllers = @[MainNavi(home),MainNavi(user)];
+    LXFriendsViewController *friends = [[LXFriendsViewController alloc]init];
+    friends.title = @"好友";
+    friends.tabBarItem.image = [UIImage imageNamed:@"栏目_默认"];
+    self.viewControllers = @[MainNavi(home),MainNavi(friends),MainNavi(user)];
 }
 
 - (void)didReceiveMemoryWarning {

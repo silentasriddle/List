@@ -12,8 +12,8 @@
 #import "LXTaskCell.h"
 #import "Utils.h"
 #import "LXListSectionFooterView.h"
-#define DocuPath [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Tasks"]
-#define Path(taskName) [NSString stringWithFormat:@"%@/%@",self.listTitle,taskName]
+#define Path [NSHomeDirectory() stringByAppendingFormat:@"/Documents/User/%@/Tasks/%@",[CurrentUser objectForKey:@"username"],self.listTitle]
+
 @interface LXTaskListViewController ()<UITableViewDelegate,UITableViewDataSource,LXListSectionFooterViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic,strong)NSMutableArray *completedTasks;
@@ -21,29 +21,23 @@
 
 @implementation LXTaskListViewController
 #pragma mark Method About Main View
--(void)setTasks:(NSMutableArray *)tasks{
-    _tasks = tasks;
-    NSMutableArray *completed = [NSMutableArray array];
-    for (BmobObject *task in tasks) {
-        if ([[task objectForKey:@"isCompleted"]boolValue]) {
-            [completed addObject:task];
-        }
-    }
-    [_tasks removeObjectsInArray:completed];
-}
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.automaticallyAdjustsScrollViewInsets = NO;
     self.title = self.listTitle;
     if (self.isAllowToAdd) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"添加任务" style:UIBarButtonItemStyleDone target:self action:@selector(addTaskAction)];
     }
     [self.tableView registerNib:[UINib nibWithNibName:@"LXTaskCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"cell"];
+
+    
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    if(!self.tasks)
-        [self loadTasks];
+    [self loadTasksWithBundle];
 }
 
 
@@ -68,11 +62,49 @@
         }
     }];
 }
+
 -(void)loadTasksWithBundle{
-    NSData *data = [NSData dataWithContentsOfFile:[NSHomeDirectory() stringByAppendingString:[NSString stringWithFormat:@"Documents/%@.arch",self.listTitle]]];
-    self.tasks = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    self.tasks = [NSMutableArray array];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSLog(@"%@",Path);
+    NSArray *taskNames = [fm contentsOfDirectoryAtPath:Path error:nil];
+    for (NSString *taskName in taskNames) {
+        if (![taskName containsString:@"."]) {
+            NSString *taskPath = [Path stringByAppendingPathComponent:taskName];
+            NSData *taskData = [NSData dataWithContentsOfFile:taskPath];
+            TaskModel *task = [NSKeyedUnarchiver unarchiveObjectWithData:taskData];
+            if (!task.isCompleted) {
+                [self.tasks addObject:task];
+            }
+            
+        }
+        
+    }
     [self.tableView reloadData];
+    
 }
+-(void)showCompletedTasks{
+    if (!self.completedTasks.count) {
+        self.completedTasks = [NSMutableArray array];
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSArray *taskNames = [fm contentsOfDirectoryAtPath:Path error:nil];
+        for (NSString *taskName in taskNames) {
+            if (![taskName containsString:@"."]) {
+                NSString *taskPath = [Path stringByAppendingPathComponent:taskName];
+                NSData *taskData = [NSData dataWithContentsOfFile:taskPath];
+                TaskModel *task = [NSKeyedUnarchiver unarchiveObjectWithData:taskData];
+                if (task.isCompleted == YES)
+                    [self.completedTasks addObject:task];
+            }
+        }
+        [self.tableView reloadData];
+    }else{
+        self.completedTasks = nil;
+        [self.tableView reloadData];
+    }
+    
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -90,19 +122,21 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     LXTaskCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell" forIndexPath:indexPath];
     if(indexPath.section == 0)
-        cell.task = self.tasks[indexPath.row];
+        cell.taskModel = self.tasks[indexPath.row];
     else
-        cell.task = self.completedTasks[indexPath.row];
-    cell.finishBlock = ^(BmobObject *task){
-        [task setObject:@(YES) forKey:@"isCompleted"];
-        [task setObject:[BmobUser currentUser] forKey:@"user"];
-        [task updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
-            if (isSuccessful) {
-                NSLog(@"已完成");
-            }
-        }];
-        [self.tasks removeObject:task];
+        cell.taskModel = self.completedTasks[indexPath.row];
+    cell.finishBlock = ^(TaskModel *task){
+        if (task.isCompleted) {
+            [self.completedTasks removeObject:task];
+        }else{
+            [self.tasks removeObject:task];
+        }
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        task.isCompleted = !task.isCompleted;
+        [Utils saveTaskStatusWithTask:task];
+        if (!task.isCompleted) {
+            [self loadTasksWithBundle];
+        }
     };
     return cell;
 }
@@ -114,21 +148,6 @@
     }
     return nil;
 }
--(void)showCompletedTasks{
-    if (self.completedTasks.count == 0) {
-        BmobQuery *query = [BmobQuery queryWithClassName:@"MyTask"];
-        [query whereKey:@"user" equalTo:CurrentUser];
-        [query whereKey:@"isCompleted" equalTo:@(YES)];
-        [query findObjectsInBackgroundWithBlock:^(NSArray *array, NSError *error) {
-            self.completedTasks = [array mutableCopy];
-            [self.tableView reloadData];
-        }];
-    }else{
-        self.completedTasks = nil;
-        [self.tableView reloadData];
-    }
-    
-}
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
     if(section == 0 )
         return 44;
@@ -138,9 +157,9 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     AddTaskViewController *add = [[AddTaskViewController alloc]init];
     if (indexPath.section == 0) {
-        add.task = [[TaskModel alloc]initWithBmobObject:self.tasks[indexPath.row]];
+        add.task = self.tasks[indexPath.row];
     }else{
-        add.task = [[TaskModel alloc]initWithBmobObject:self.completedTasks[indexPath.row]];
+        add.task = self.completedTasks[indexPath.row];
     }
     add.taskType = self.listTitle;
     [self.navigationController pushViewController:add animated:YES];

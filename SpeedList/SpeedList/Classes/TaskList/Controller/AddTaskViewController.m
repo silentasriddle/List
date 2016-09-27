@@ -15,7 +15,7 @@
 #define ImageHeight 100
 #define Margin 5
 #define RowHeight 44
-#define FileDirectoryPath [NSString stringWithFormat:@"Tasks/%@",self.taskType]
+#define FileDirectoryPath [NSString stringWithFormat:@"User/%@/Tasks/%@",CurrentUser.username,self.taskType]
 @interface AddTaskViewController ()<UITableViewDelegate,UITableViewDataSource,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UITableViewCell *titleCell;
@@ -91,8 +91,22 @@
         item.title = @"完成";
         return;
     }
-    
-    BmobObject *task = self.task? self.task.bmobTask : [BmobObject objectWithClassName:@"MyTask"];
+    if (self.task) {
+        BmobQuery *query = [BmobQuery queryWithClassName:@"MyTask"];
+        [query getObjectInBackgroundWithId:self.task.bmobTaskID block:^(BmobObject *object, NSError *error) {
+            if (object) {
+                [self updateBmobObjectWithTask:object];
+            }else{
+                NSLog(@"%@",error);
+            }
+        }];
+    }else{
+        BmobObject *task = [BmobObject objectWithClassName:@"MyTask"];
+        [self updateBmobObjectWithTask:task];
+    }
+    self.navigationItem.rightBarButtonItem.title = @"";
+}
+-(void)updateBmobObjectWithTask:(BmobObject*)task{
     NSDateFormatter *dayDF = [[NSDateFormatter alloc]init];
     dayDF.dateFormat = @"yyyy-MM-dd";
     NSDate *taskDate = [dayDF dateFromString:self.taskDateLabel.text];
@@ -103,27 +117,30 @@
     [task setObject:taskDate forKey:@"taskDate"];
     [task setObject:wakeTime forKey:@"wakeTime"];
     [task setObject:self.taskType forKey:@"type"];
+    NSNumber *isCompleted = self.task ? @(NO) : @(self.task.isCompleted);
+    [task setObject:isCompleted forKey:@"isCompleted"];
     [task setObject:[BmobUser currentUser] forKey:@"user"];
     [task setObject:self.remarkLabel.text forKey:@"remark"];
     //将任务模型进行本地数据持久化
     [Utils archiveTaskWithPath:self.filePath andPhotos:self.photos andTask:task];
     if (self.task) {
         [task updateInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+            [Utils archiveTaskWithPath:self.filePath andPhotos:self.photos andTask:task];
             if (isSuccessful && self.isPhotosChanged) {
+                
                 [Utils cacheTaskWithTask:task andPhotos:self.photos];
+            }else{
+                NSLog(@"%@",error);
             }
         }];
     }else{
         [task saveInBackgroundWithResultBlock:^(BOOL isSuccessful, NSError *error) {
+            [Utils archiveTaskWithPath:self.filePath andPhotos:self.photos andTask:task];
             if (isSuccessful && self.isPhotosChanged) {
                 [Utils cacheTaskWithTask:task andPhotos:self.photos];
             }
         }];
     }
-}
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 #pragma mark <UITableViewDataSource>
 

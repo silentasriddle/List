@@ -19,7 +19,8 @@
         self.taskDate = [aDecoder decodeObjectForKey:@"taskDate"];
         self.wakeTime = [aDecoder decodeObjectForKey:@"wakeTime"];
         self.photoDatas = [aDecoder decodeObjectForKey:@"photoDatas"];
-        self.isCompleted = [aDecoder decodeObjectForKey:@"isCompleted"];
+        self.isCompleted = [[aDecoder decodeObjectForKey:@"isCompleted"]boolValue];
+        self.bmobTaskID = [aDecoder decodeObjectForKey:@"bmobTaskID"];
     }
     return self;
 }
@@ -32,6 +33,7 @@
     [aCoder encodeObject:self.wakeTime forKey:@"wakeTime"];
     [aCoder encodeObject:self.photoDatas forKey:@"photoDatas"];
     [aCoder encodeObject:@(self.isCompleted) forKey:@"isCompleted"];
+    [aCoder encodeObject:self.bmobTaskID forKey:@"bmobTaskID"];
 }
 -(instancetype)initWithBmobObject:(BmobObject *)bObj{
     self = [super init];
@@ -43,8 +45,8 @@
         self.user = [bObj objectForKey:@"user"];
         self.taskDate = [bObj objectForKey:@"taskDate"];
         self.wakeTime = [bObj objectForKey:@"wakeTime"];
-        self.bmobTask = bObj;
-        self.isCompleted = [bObj objectForKey:@"isCompleted"];
+        self.bmobTaskID = bObj.objectId;
+        self.isCompleted = [[bObj objectForKey:@"isCompleted"]boolValue];
     }
     return self;
 }
